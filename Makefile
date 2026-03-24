@@ -8,18 +8,24 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 TARGET = main
 
 # Source files
-SRC = main.cpp
+SRC = $(wildcard *.cpp)
+
+# Object files
+OBJ = $(SRC:.cpp=.o)
 
 # Default target
 all: $(TARGET)
 
-# Build rule
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
+# Link object files into executable
+$(TARGET): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $@ $^
+
+# Compile each .cpp into .o
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean build files
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(OBJ)
 
-# Phony targets
 .PHONY: all clean
