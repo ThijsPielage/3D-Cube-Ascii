@@ -4,8 +4,8 @@
 
 using namespace std;
 
-vector<string> buildEmptyFrame(size_t width, size_t height) {
-    vector<string> frame;
+Frame buildEmptyFrame(size_t width, size_t height) {
+    Frame frame;
     string emptyLine(width, '.');
     for (size_t i = 0; i < height; i++) {
         frame.push_back(emptyLine);
@@ -13,17 +13,17 @@ vector<string> buildEmptyFrame(size_t width, size_t height) {
     return frame;
 }
 
-void showFrame(const vector<string>& frame) {
+void showFrame(const Frame& frame) {
     for (size_t i = 0; i < frame.size(); i++) {
         cout << frame[i] << endl;
     }
 }
 
-bool pointInFrame(const vector<string>& frame, GridPoint& p) {
+bool pointInFrame(const Frame& frame, const GridPoint& p) {
     return pointInFrame(frame, p.x, p.y);
 }
 
-bool pointInFrame(const vector<string>& frame, int x, int y) {
+bool pointInFrame(const Frame& frame, int x, int y) {
     size_t height = frame.size();
     size_t width = frame[0].size();
 
@@ -49,7 +49,11 @@ bool pointInTriangle(const GridPoint& p, const GridTriangle& t) {
            (e1 <= 0 && e2 <= 0 && e3 <= 0);
 }
 
-void drawLine(vector<string>& frame, GridPoint p1, GridPoint p2, const char c){
+void drawPoint(Frame& frame, const GridPoint p, char c) {
+    frame[p.y][p.x] = c;
+}
+
+void drawLine(Frame& frame, GridPoint p1, GridPoint p2, char c){
     if (p1.x == p2.x && p1.y == p2.y) {
         if (pointInFrame(frame, p1)) {
             frame[p1.y][p1.x] = c;      
@@ -91,7 +95,7 @@ void drawLine(vector<string>& frame, GridPoint p1, GridPoint p2, const char c){
     }
 }
 
-BoundingBox triangleBBox(const vector<string>& frame, const GridTriangle& t) {
+BoundingBox triangleBBox(const Frame& frame, const GridTriangle& t) {
     size_t height = frame.size();
     size_t width = frame[0].size();
     int minx = min(t.p1.x, min(t.p2.x, t.p3.x));
@@ -107,13 +111,13 @@ BoundingBox triangleBBox(const vector<string>& frame, const GridTriangle& t) {
     return result;
 }
 
-void drawTriangleOutline(vector<string>& frame, const GridTriangle& t, char c) {
+void drawTriangleOutline(Frame& frame, const GridTriangle& t, char c) {
     drawLine(frame, t.p1, t.p2, c);
     drawLine(frame, t.p2, t.p3, c);
     drawLine(frame, t.p3, t.p1, c);
 }
 
-void drawTriangle(vector<string>& frame, const GridTriangle& t, char c) {
+void drawTriangle(Frame& frame, const GridTriangle& t, char c) {
     BoundingBox bbox = triangleBBox(frame, t);
     for (int y = bbox.miny; y <= bbox.maxy; y++){
         for (int x = bbox.minx; x <= bbox.maxx; x++) {

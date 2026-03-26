@@ -3,68 +3,72 @@
 #include<string>
 #include<cmath>
 #include "raster.h"
+#include "Vector3D.h"
 
 using namespace std;
 
-struct Point3D {
-    float x, y, z;
-};
-
-struct Triangle3D {
-    Point3D p1, p2, p3;
-};
-
 struct CubeMesh {
-    Point3D vertices[8];
-    int triangles[12][3];
+    vector<Vector3D> vertices;
+    vector<vector<int>> faces;
 };
+
+void transposeCube(CubeMesh& cube, const Vector3D& b) {
+    for (auto& v : cube.vertices) {
+        transposeVector3D(v, b);
+    }
+}
+
+void scaleCube(CubeMesh& cube, const Vector3D& b) {
+    for (auto& v : cube.vertices) {
+        scaleVector3D(v, b);
+    }
+}
 
 CubeMesh buildUnitCube() {
     CubeMesh cube;
 
-    // Assign Vertices
-    cube.vertices[0] = {0,0,0};
-    cube.vertices[1] = {1,0,0};
-    cube.vertices[2] = {1,1,0};
-    cube.vertices[3] = {0,1,0};
-    cube.vertices[4] = {0,0,1};
-    cube.vertices[5] = {1,0,1};
-    cube.vertices[6] = {0,1,1};
-    cube.vertices[7] = {1,1,1};
-    
-    // Assign triangle indices
-    int t[12][3] = {
-        {0,1,2}, {0,2,3},
-        {4,5,6}, {4,6,7},
-        {0,1,5}, {0,5,4},
-        {2,3,7}, {2,7,6},
-        {0,3,7}, {0,7,4},
-        {1,2,6}, {1,6,5}
+    cube.vertices = {
+        {0,0,0}, {1,0,0}, {1,1,0}, {0,1,0},
+        {0,0,1}, {1,0,1}, {0,1,1}, {1,1,1}
     };
 
-    for (int i = 0; i < 12; i++) {
-        cube.triangles[i][0] = t[i][0];
-        cube.triangles[i][1] = t[i][1];
-        cube.triangles[i][2] = t[i][2];
-    }
+    cube.faces = {
+        {0,1,2}, {0,2,3}, {4,5,6}, {4,6,7},
+        {0,1,5}, {0,5,4}, {2,3,7}, {2,7,6},
+        {0,3,7}, {0,7,4}, {1,2,6}, {1,6,5}
+    };
 
     return cube;
 }
 
-GridPoint ortographicToGrid(Point3D p) {
-    GridPoint gp = {int(round(p.x)), int(round(p.y))};\
+GridPoint orthographicToGrid(Vector3D p) {
+    GridPoint gp = {int(round(p.x * 2)), int(round(p.y))};\
     return gp;
 }
 
+
+
+void projectCube(Frame& frame, const CubeMesh& cube) {
+    for (const auto& face : cube.faces) {
+        GridPoint gp1 = orthographicToGrid(cube.vertices[face[0]]);
+        GridPoint gp2 = orthographicToGrid(cube.vertices[face[1]]);
+        GridPoint gp3 = orthographicToGrid(cube.vertices[face[2]]);
+
+        GridTriangle t = {gp1, gp2, gp3};
+        drawTriangle(frame, t, '#');
+    }
+}
+
 int main() {
-    GridPoint p1 = {2, 2};
-    GridPoint p2 = {15, 2};
-    GridPoint p3 = {8, 7};
-    GridTriangle t = {p1, p2, p3};
+    CubeMesh cube = buildUnitCube();
+    Vector3D scale = {5, 5, 5};
+    scaleCube(cube, scale);
+    Vector3D shift = {2, 2, 2};
+    transposeCube(cube, shift);
 
-    vector<string> frame = buildEmptyFrame(20, 10);
+    Frame frame = buildEmptyFrame(20, 10);
+    projectCube(frame, cube);
 
-    drawTriangle(frame, t, '#');
     showFrame(frame);
 
     return 0;

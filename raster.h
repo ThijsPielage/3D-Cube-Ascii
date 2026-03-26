@@ -21,22 +21,22 @@ struct BoundingBox {
     int maxy;
 };
 
+using Frame = vector<string>;
+
 // Build / show ASCII frame
-vector<string> buildEmptyFrame(size_t width, size_t height);
-void showFrame(const vector<string>& frame);
+Frame buildEmptyFrame(size_t width, size_t height);
+void showFrame(const Frame& frame);
 
 
 // Point helpers
-bool pointInFrame(const vector<string>& frame, const GridPoint& p);
-bool pointInFrame(const vector<string>& frame, int x, int y);
-
-bool pointInTriangle(const GridPoint& p, const GridPoint& a, const GridPoint& b, const GridPoint& c);
+bool pointInFrame(const Frame& frame, const GridPoint& p);
+bool pointInFrame(const Frame& frame, int x, int y);
+bool pointInTriangle(const GridPoint& p, const GridTriangle& t);
 
 // Drawing functions
-void drawLine(vector<string>& frame, GridPoint p1, GridPoint p2, char c);
+BoundingBox triangleBBox(const Frame& frame, const GridTriangle& t);
 
-BoundingBox triangleBBox(const vector<string>& frame, const GridTriangle& t);
-
-void drawTriangle(vector<string>& frame, const GridTriangle& t, char c);
-
-void drawTriangleOutline(vector<string>& frame, const GridTriangle& t, char c);
+void drawPoint(Frame& frame, const GridPoint p, char c);
+void drawLine(Frame& frame, GridPoint p1, GridPoint p2, char c);
+void drawTriangleOutline(Frame& frame, const GridTriangle& t, char c);
+void drawTriangle(Frame& frame, const GridTriangle& t, char c);

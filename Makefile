@@ -8,10 +8,10 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 TARGET = main
 
 # Source files
-SRC = $(wildcard *.cpp)
+SRC = main.cpp raster.cpp Vector3D.cpp
 
 # Object files
-OBJ = $(SRC:.cpp=.o)
+OBJ = main.o raster.o Vector3D.o
 
 # Default target
 all: $(TARGET)
@@ -21,8 +21,11 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 # Compile each .cpp into .o
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+main.o: main.cpp raster.h
+	$(CXX) $(CXXFLAGS) -c main.cpp -o main.o
+
+raster.o: raster.cpp raster.h
+	$(CXX) $(CXXFLAGS) -c raster.cpp -o raster.o
 
 # Clean build files
 clean:
