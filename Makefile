@@ -8,10 +8,10 @@ CXXFLAGS = -std=c++20 -Wall -Wextra -O2
 TARGET = main
 
 # Source files
-SRC = main.cpp raster.cpp Vector3D.cpp
+SRC = main.cpp raster.cpp Vector3D.cpp geometry.cpp
 
 # Object files
-OBJ = main.o raster.o Vector3D.o
+OBJ = main.o raster.o Vector3D.o geometry.o
 
 # Default target
 all: $(TARGET)
