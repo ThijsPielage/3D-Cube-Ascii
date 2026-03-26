@@ -25,7 +25,9 @@ using Frame = vector<string>;
 
 // Build / show ASCII frame
 Frame buildEmptyFrame(size_t width, size_t height);
+Frame buildEmptySquareFrame(size_t size);
 void showFrame(const Frame& frame);
+void clearScreen();
 
 
 // Point helpers

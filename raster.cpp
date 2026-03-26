@@ -6,17 +6,25 @@ using namespace std;
 
 Frame buildEmptyFrame(size_t width, size_t height) {
     Frame frame;
-    string emptyLine(width, '.');
+    string emptyLine(width, ' ');
     for (size_t i = 0; i < height; i++) {
         frame.push_back(emptyLine);
     }
     return frame;
 }
 
+Frame buildEmptySquareFrame(size_t size) {
+    return buildEmptyFrame(2* size, size);
+}
+
 void showFrame(const Frame& frame) {
     for (size_t i = 0; i < frame.size(); i++) {
         cout << frame[i] << endl;
     }
+}
+
+void clearScreen() {
+    cout << "\033[2J\033[H";
 }
 
 bool pointInFrame(const Frame& frame, const GridPoint& p) {
