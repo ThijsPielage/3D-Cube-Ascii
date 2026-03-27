@@ -8,39 +8,25 @@
 #include "raster.h"
 #include "Vector3D.h"
 #include "geometry.h"
+#include "projection.h"
 
 using namespace std;
 
-GridPoint orthographicToGrid(Frame& frame, Vector3D p) {
-    int cx = frame[0].size() / 2;
-    int cy = frame.size() / 2;
-    GridPoint gp = {int(round(p.x * 2)) + cx, int(round(p.y)) + cy};
-    return gp;
-}
-
-void projectMesh(Frame& frame, const Mesh& mesh) {
-    for (const auto& face : mesh.faces) {
-        GridPoint gp1 = orthographicToGrid(frame, mesh.vertices[face[0]]);
-        GridPoint gp2 = orthographicToGrid(frame, mesh.vertices[face[1]]);
-        GridPoint gp3 = orthographicToGrid(frame, mesh.vertices[face[2]]);
-
-        GridTriangle t = {gp1, gp2, gp3};
-        drawTriangle(frame, t, '#');
-    }
-}
-
 int main() {
-    Mesh cube = buildCube(10);
+    Mesh cube = buildCube(20);
 
-    Vector3D axis = {1, 1, 2};
-    float dtheta = 0.1;
+    Vector3D Raxis = {1, 1, 2};
+    Vector3D cameraDir = {0, 0, -1};
+    Vector3D lightDir = {1, 1, -1};
+    float dtheta = 0.05;
+
     while (1) {
         clearScreen();
-        Frame frame = buildEmptySquareFrame(20);
-        rotateMesh(cube, axis, dtheta);
-        projectMesh(frame, cube);
+        Frame frame = buildEmptySquareFrame(50);
+        rotateMesh(cube, Raxis, dtheta);
+        projectMesh(frame, cube, cameraDir, lightDir);
         showFrame(frame);
-        this_thread::sleep_for(chrono::milliseconds(50));
+        this_thread::sleep_for(chrono::milliseconds(20));
     }
 
     return 0;
