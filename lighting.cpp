@@ -2,7 +2,7 @@
 #include <string>
 
 char brightnessToAscii(float v) {
-    const string ASCII = ".,-~:;=!*#$@MW&8%B";
+    const string ASCII = ".:-=+*#%@";
     int index = v * (ASCII.size() - 1);
     return ASCII[index];
 }
