@@ -56,6 +56,11 @@ Vector3D getFaceNormal(const Vector3D& a, const Vector3D& b, const Vector3D& c) 
         return cross(ab, ac);
 }
 
+void flipFaceNormal(Mesh& mesh, int faceIndex) {
+    auto& face = mesh.faces[faceIndex];
+    swap(face[1], face[2]);
+}
+
 /* ########### PRIMITIVES #################*/
 
 Mesh buildUnitCube() {

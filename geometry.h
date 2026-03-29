@@ -28,3 +28,4 @@ Vector3D findMeshCenter(const Mesh& mesh);
 void centerMesh(Mesh& mesh);
 
 Vector3D getFaceNormal(const Vector3D& p1, const Vector3D& p2, const Vector3D& p3);
+void flipFaceNormal(Mesh& mesh, int faceIndex);
