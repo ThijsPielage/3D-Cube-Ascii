@@ -3,6 +3,8 @@
 #include <string>
 #include <cmath>
 
+#include "Vector3D.h"
+
 using namespace std;
 
 struct GridPoint {
@@ -22,12 +24,16 @@ struct BoundingBox {
 };
 
 using Frame = vector<string>;
+using DepthBuffer = vector<vector<float>>;
 
 // Build / show ASCII frame
 Frame buildEmptyFrame(size_t width, size_t height);
 Frame buildEmptySquareFrame(size_t size);
 void showFrame(const Frame& frame);
 void clearScreen();
+
+// Build the depth buffer
+DepthBuffer initializeDepthBuffer(const Frame& frame);
 
 
 // Point helpers
@@ -40,5 +46,6 @@ BoundingBox triangleBBox(const Frame& frame, const GridTriangle& t);
 
 void drawPoint(Frame& frame, const GridPoint p, char c);
 void drawLine(Frame& frame, GridPoint p1, GridPoint p2, char c);
-void drawTriangleOutline(Frame& frame, const GridTriangle& t, char c);
-void drawTriangle(Frame& frame, const GridTriangle& t, char c);
+void drawTriangle(Frame& frame, DepthBuffer& db, const GridTriangle& tri,
+                  const Vector3D& a, const Vector3D& b, const Vector3D& c,
+                  const Vector3D& cameraDir, char shade);

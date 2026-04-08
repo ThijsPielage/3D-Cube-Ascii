@@ -10,9 +10,9 @@ struct FaceDepth {
     float depth;
 };
 
-using DepthMap = vector<FaceDepth>;
 using FaceIndices = vector<int>;
 
 FaceIndices backFaceCull(const Mesh& mesh, const Vector3D& cameraDir);
 GridPoint orthographicToGrid(const Frame& frame, const Vector3D& p, const Vector3D& cameraDir);
-void projectMesh(Frame& frame, const Mesh& mesh, const Vector3D& cameraDir, const Vector3D& lightDir);
+GridPoint perspectiveToGrid(const Frame& frame, const Vector3D& p, const Vector3D& cameraDir);
+void projectMesh(Frame& frame, DepthBuffer& db, const Mesh& mesh, const Vector3D& cameraDir, const Vector3D& lightDir);

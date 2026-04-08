@@ -27,6 +27,13 @@ void clearScreen() {
     cout << "\033[2J\033[H";
 }
 
+DepthBuffer initializeDepthBuffer(const Frame& frame) {
+    size_t height = frame.size();
+    size_t width = frame[0].size();
+
+    return DepthBuffer(height, vector<float>(width, 1e9));
+}
+
 bool pointInFrame(const Frame& frame, const GridPoint& p) {
     return pointInFrame(frame, p.x, p.y);
 }
@@ -119,21 +126,64 @@ BoundingBox triangleBBox(const Frame& frame, const GridTriangle& t) {
     return result;
 }
 
-void drawTriangleOutline(Frame& frame, const GridTriangle& t, char c) {
-    drawLine(frame, t.p1, t.p2, c);
-    drawLine(frame, t.p2, t.p3, c);
-    drawLine(frame, t.p3, t.p1, c);
+float edgeFunction(const GridPoint& a, const GridPoint& b, const GridPoint& c) {
+    return (c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x);
 }
 
-void drawTriangle(Frame& frame, const GridTriangle& t, char c) {
-    BoundingBox bbox = triangleBBox(frame, t);
-    for (int y = bbox.miny; y <= bbox.maxy; y++){
-        for (int x = bbox.minx; x <= bbox.maxx; x++) {
+void drawTriangle(Frame& frame,
+                  DepthBuffer& db,
+                  const GridTriangle& tri,
+                  const Vector3D& a,
+                  const Vector3D& b,
+                  const Vector3D& c,
+                  const Vector3D& cameraDir,
+                  char shade)
+{
+    GridPoint p0 = tri.p1;
+    GridPoint p1 = tri.p2;
+    GridPoint p2 = tri.p3;
+
+    int width = frame[0].size();
+    int height = frame.size();
+
+    // Bounding box
+    int minX = std::max(0, std::min({p0.x, p1.x, p2.x}));
+    int maxX = std::min(width - 1, std::max({p0.x, p1.x, p2.x}));
+    int minY = std::max(0, std::min({p0.y, p1.y, p2.y}));
+    int maxY = std::min(height - 1, std::max({p0.y, p1.y, p2.y}));
+
+    float area = edgeFunction(p0, p1, p2);
+
+    float depthA = dot(a, cameraDir);
+    float depthB = dot(b, cameraDir);
+    float depthC = dot(c, cameraDir);
+
+    for (int y = minY; y <= maxY; y++) {
+        for (int x = minX; x <= maxX; x++) {
+
             GridPoint p = {x, y};
-            if (pointInTriangle(p, t)) {
-                frame[y][x] = c;
+
+            float w0 = edgeFunction(p1, p2, p);
+            float w1 = edgeFunction(p2, p0, p);
+            float w2 = edgeFunction(p0, p1, p);
+
+            if ((w0 >= 0 && w1 >= 0 && w2 >= 0) ||
+                (w0 <= 0 && w1 <= 0 && w2 <= 0)) {
+
+                w0 /= area;
+                w1 /= area;
+                w2 /= area;
+
+                float depth =
+                    w0 * depthA +
+                    w1 * depthB +
+                    w2 * depthC;
+
+                if (depth < db[y][x]) {
+                    db[y][x] = depth;
+                    frame[y][x] = shade;
+                }
             }
         }
     }
-    drawTriangleOutline(frame, t, c);
 }

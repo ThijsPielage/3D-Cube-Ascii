@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3D.h"
+#include <math.h>
 
 using MeshVertices = vector<Vector3D>;
 using MeshFaces = vector<vector<int>>;
@@ -17,10 +18,13 @@ Mesh buildUnitPyramid();
 Mesh buildPyramid(const float x, const float y, const float z);
 Mesh buildPyramid(const float s);
 
+Mesh buildUnitUVSphere(const unsigned segments, const unsigned rings);
+Mesh buildUVSphere(const unsigned segments, const unsigned rings, const float s);
+
 void transposeMesh(Mesh& mesh, const Vector3D& b);
 
 void scaleMesh(Mesh& mesh, const Vector3D& b);
-void scalemesh(Mesh& mesh, float b);
+void scaleMesh(Mesh& mesh, float b);
 
 void rotateMesh(Mesh& mesh, Vector3D axis, float angle);
 
@@ -29,3 +33,4 @@ void centerMesh(Mesh& mesh);
 
 Vector3D getFaceNormal(const Vector3D& p1, const Vector3D& p2, const Vector3D& p3);
 void flipFaceNormal(Mesh& mesh, int faceIndex);
+void polygonsToTris(Mesh& mesh);
